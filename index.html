@@ -1,0 +1,63 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app='blogtrk'>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Blog Tracker</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="file:///Users/tylerscionti/Desktop/BlogTrackr/BT.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+</head>
+<body>
+
+<div class='container-fluid' ng-controller='ResultController'>
+	<div class="jumbotron text-center">
+	
+		<h1>Blog Trackr</h1>
+		<p> Powered by Alchemy API </p>
+		<form class="form-inline">
+			<input type="url" class="form-control" size="50" placeholder="Enter your blog URL" ng-model='url1'>
+			<button type="button" class="btn btn-primary" ng-click='search()'>Search<span class="glyphicon glyphicon-search"></span></button>
+		</form>
+		<div ng-show='error!=null'>
+			{{error}}
+		</div>
+		
+	</div>
+
+		
+	
+	<div class="row">
+		<div class="col-sm-12" >&nbsp;</div>
+		
+	</div>
+	<div class="row" ng-show='results.length>0'>
+		<ul class="nav nav-pills">
+			<li class="active"><a href="#">All</a></li>
+			<li><a href="#">Article</a></li>
+			<li><a href="#">Person</a></li>
+			<li><a href="#">Company</a></li>
+		</ul>
+	</div>
+	<div class="row" >
+		<div class="col-sm-12" ng-repeat='r in results'>
+		<div class="panel panel-default">
+	      <div class="panel-heading"><a href="{{r.source.enriched.url.url}}">{{r.source.enriched.url.title}}</a></div>
+	      <div class="panel-body">
+	      	<p>{{r.source.enriched.url.text}}</p>
+	      </div>
+	     </div> 
+	    </div>
+		
+	</div>
+	</div>
+
+<script src="controller.js"></script>
+</body>
+</html>
