@@ -34,5 +34,21 @@ words = sorted(w for w in set(text) if len(w) > 5 and fdist1[w] > 2)
 print('Here are the topis we pulled out:')
 for word in words:
 	print('-' + word)
+	
+#Loops through the words in the text and pulls out the nouns
+print('Nouns pulled:')
+is_noun = lambda pos: pos[:2] == 'NN'
+nouns = [word for (word, pos) in nltk.pos_tag(text) if is_noun(pos)]
+print(nouns)
+
+#Loops through the words in the text and pulls out the collocations (word pairs that go together)
+colloc = []
+for word in text:
+	if len(word) > 5 and fdist1[word] > 2:
+		colloc.append(word)
+
+finder = BigramCollocationFinder.from_words(colloc)
+scored = finder.score_ngrams(bigram_measures.raw_freq)
+print(sorted(bigram for bigram, score in scored))
 
 
