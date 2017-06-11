@@ -1,15 +1,8 @@
-import webhoseio
+import webhose
 
-webhoseio.config(token="97029546-2c7f-4116-a16d-e88dd66f09c2")
-output = webhoseio.query("filterWebContent", {"q": "donald trump" " language:english"})
-print(output['posts'][0]['title']) # Print the text of the first post
-print(output['posts'][0]['url']) # Print the text of the first post publication date
-
-    
-# Get the next batch of posts
-
-output = webhoseio.get_next()
-
-    
-# Print the site of the first post
-
+def news_search(keyword):
+	webhose.config(token="97029546-2c7f-4116-a16d-e88dd66f09c2")
+	r = webhose.search(keyword)
+	print(r.total)
+	for i in range(10):
+		print(r.posts[i].title)
