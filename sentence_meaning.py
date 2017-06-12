@@ -4,7 +4,6 @@ from nltk.collocations import *
 import feedparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from nltk.corpus import conll2000
 
 url = input("Enter a RSS feed url: ")
 feed = feedparser.parse(url)
