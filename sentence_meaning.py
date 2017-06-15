@@ -4,6 +4,8 @@ from nltk.collocations import *
 import feedparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from nltk.corpus import conll2000
+import matplotlib
 
 url = input("Enter a RSS feed url: ")
 feed = feedparser.parse(url)
@@ -18,12 +20,12 @@ sentences = [nltk.word_tokenize(sent) for sent in sentences]
 sentences = [nltk.pos_tag(sent) for sent in sentences]
 
 grammar = r"""
-  NP: {<DT|JJ|NN.*>+}          # Chunk sequences of DT, JJ, NN
-  PP: {<IN><NP>}               # Chunk prepositions followed by NP
-  VP: {<VB.*><NP|PP|CLAUSE>+$} # Chunk verbs and their arguments
-  CLAUSE: {<NP><VP>}           # Chunk NP, VP
-  """
+	NBAR: {<NN.*|JJ>*<NN.*>}  # Nouns and Adjectives, terminated with Nouns    
+    NP:
+        {<NBAR>}
+        {<NBAR><IN><NBAR>}"""
 cp = nltk.RegexpParser(grammar, loop=2)
 for sentence in sentences:
 	result = cp.parse(sentence)
 	print(result)
+	result.draw()
