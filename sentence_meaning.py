@@ -5,7 +5,8 @@ import feedparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-feed = feedparser.parse('http://m3wealthadvisors.com/blog/feed/')
+url = input("Enter a RSS feed URL:")
+feed = feedparser.parse(url)
 for entry in feed['entries']:
 	content = urlopen(entry['link']).read()
 	soup = BeautifulSoup(content, "html.parser")
