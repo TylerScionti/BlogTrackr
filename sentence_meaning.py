@@ -1,31 +1,35 @@
 import nltk
 from nltk import FreqDist, word_tokenize
-from nltk.collocations import *
+from nltk.tree import Tree
 import feedparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from nltk.corpus import conll2000
-import matplotlib
 
-url = input("Enter a RSS feed url: ")
-feed = feedparser.parse(url)
+feed = feedparser.parse('http://m3wealthadvisors.com/blog/feed/')
 for entry in feed['entries']:
 	content = urlopen(entry['link']).read()
 	soup = BeautifulSoup(content, "html.parser")
 	content = soup.findAll('p')
 	stuff = str(content)
 
-sentences = nltk.sent_tokenize(stuff)
-sentences = [nltk.word_tokenize(sent) for sent in sentences]
-sentences = [nltk.pos_tag(sent) for sent in sentences]
+toks = nltk.tokenize.word_tokenize(stuff)
+postoks = nltk.tag.pos_tag(toks)
 
 grammar = r"""
-	NBAR: {<NN.*|JJ>*<NN.*>}  # Nouns and Adjectives, terminated with Nouns    
+	NBAR: {<NN.*|JJ>*<NN.*>}  
     NP:
+    	{<NN><NN>}
         {<NBAR>}
         {<NBAR><IN><NBAR>}"""
-cp = nltk.RegexpParser(grammar, loop=2)
-for sentence in sentences:
-	result = cp.parse(sentence)
-	print(result)
-	result.draw()
+result= []
+cp= nltk.RegexpParser(grammar)
+tree = cp.parse(postoks)
+
+phrases = []
+for subtree in tree.subtrees(filter=lambda t: t.label() == 'NP'):
+	if len(subtree.leaves()) > 1:
+		phrases.append(subtree.leaves())
+
+for phrase in phrases:
+	my_ids = [idx for idx, val in phrase]
+	print(" ".join(my_ids))
