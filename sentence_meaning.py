@@ -5,32 +5,37 @@ import feedparser
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-url = input("Enter a RSS feed URL:")
-feed = feedparser.parse(url)
-for entry in feed['entries']:
-	content = urlopen(entry['link']).read()
-	soup = BeautifulSoup(content, "html.parser")
-	content = soup.findAll('p')
-	stuff = str(content)
+def printChunks(chunk_name, tree):
+    phrases = []
+    print(chunk_name + " phrases: \n")
+    for subtree in tree.subtrees(filter=lambda t: t.label() == chunk_name):
+            if len(subtree.leaves()) > 1:
+                phrases.append(" ".join([a for (a,b) in subtree.leaves()]))
+    print (phrases)
+    print("\n")
+    return phrases
+
+url = input("Enter a page URL:")
+content = urlopen(url).read()
+soup = BeautifulSoup(content, "html.parser")
+content = soup.findAll('p')
+stuff = str(content)
 
 toks = nltk.tokenize.word_tokenize(stuff)
+
 postoks = nltk.tag.pos_tag(toks)
 
 grammar = r"""
-	NBAR: {<NN.*|JJ>*<NN.*>}  
-    NP:
-    	{<NN><NN>}
-        {<NBAR>}
-        {<NBAR><IN><NBAR>}"""
+    NNx2: {<NN.>+}
+	NBAR: {<NN.*|JJ.>*<NN.*>}
+    NBARx2: {<NBAR>(<IN><PRP.>?<DT>?<NBAR>)+}
+    VRB: {(<NBAR>|PRP.)?<VB.><JBAR>?<IN>?<DT>?(<NBAR>|<JBAR>)}
+        """
 result= []
 cp= nltk.RegexpParser(grammar)
 tree = cp.parse(postoks)
 
-phrases = []
-for subtree in tree.subtrees(filter=lambda t: t.label() == 'NP'):
-	if len(subtree.leaves()) > 1:
-		phrases.append(subtree.leaves())
-
-for phrase in phrases:
-	my_ids = [idx for idx, val in phrase]
-	print(" ".join(my_ids))
+nbarChunks = printChunks("NBAR", tree)
+nbarx2Chunks = printChunks("NBARx2", tree)
+pure_noun_phrases = printChunks("NNx2", tree)
+printChunks("VRB", tree)
