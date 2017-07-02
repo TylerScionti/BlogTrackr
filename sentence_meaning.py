@@ -1,8 +1,7 @@
 import nltk
 from nltk import FreqDist, word_tokenize
-from nltk.tree import Tree
-import feedparser
 from urllib.request import urlopen
+from nltk.corpus import stopwords
 from bs4 import BeautifulSoup
 
 def printChunks(chunk_name, tree):
@@ -21,9 +20,35 @@ soup = BeautifulSoup(content, "html.parser")
 content = soup.findAll('p')
 stuff = str(content)
 
-toks = nltk.tokenize.word_tokenize(stuff)
+sents = nltk.sent_tokenize(stuff)
 
-postoks = nltk.tag.pos_tag(toks)
+
+print("Num words, and Num sentences:")
+print(len(sents))
+print("-" * 30)
+
+print("Avg sentence length:")
+sent_lengths = []
+for sent in sents:
+	sent_lengths.append((len(sent)))
+
+avg_sent_length = sum(sent_lengths) / len(sent_lengths)
+print(avg_sent_length)
+
+print("-" * 30)
+long_sents = []
+print("Long Sentences:")
+for sent in sents:
+	long_sent = len(sent) > avg_sent_length
+	if long_sent:
+		print(sent)
+		long_sents.append(sent)
+long_sents = str(long_sents)
+
+words = nltk.word_tokenize(long_sents)
+stop_words = set(stopwords.words('english'))
+clean_tokens = [w for w in words if not w in stop_words]
+postoks = nltk.tag.pos_tag(words)
 
 grammar = r"""
     NNx2: {<NN.>+}
