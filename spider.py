@@ -8,6 +8,8 @@ from blogtrackr_scraper.items import BlogtrackrScraperItem
 """
 Uses this class from 'blogtrackr_scraper.items
 
+import scrapy
+from scrapy.item import Item, Field
 
 class BlogtrackrScraperItem(scrapy.Item):
 	url = Field() 
